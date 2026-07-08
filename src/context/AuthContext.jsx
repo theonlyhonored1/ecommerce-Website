@@ -50,12 +50,19 @@ export function AuthProvider({ children }) {
     setCurrentUser(null)
   }
 
+  function setUserRole(email, role) {
+    setUsers((prev) => prev.map((u) => (u.email === email ? { ...u, role } : u)))
+    setCurrentUser((prev) => (prev && prev.email === email ? { ...prev, role } : prev))
+  }
+
   const value = {
     currentUser,
     isAdmin: currentUser?.role === 'admin',
+    users,
     signup,
     login,
     logout,
+    setUserRole,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

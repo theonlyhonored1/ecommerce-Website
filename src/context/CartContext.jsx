@@ -1,12 +1,14 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { loadFromStorage, saveToStorage } from '../utils/storage'
 import { useProducts } from './ProductContext'
+import { useSettings } from './SettingsContext'
 
 const CartContext = createContext(null)
 const CART_KEY = 'ecom_cart'
 
 export function CartProvider({ children }) {
   const { getProduct } = useProducts()
+  const { settings } = useSettings()
   // items: [{ productId, qty }]
   const [items, setItems] = useState(() => loadFromStorage(CART_KEY, []))
 
@@ -57,9 +59,8 @@ export function CartProvider({ children }) {
     (sum, l) => sum + (l.product.discountPrice ?? l.product.price) * l.qty,
     0,
   )
-  const TAX_RATE = 0.08
-  const tax = subtotal * TAX_RATE
-  const shipping = subtotal === 0 || subtotal >= 75 ? 0 : 6.99
+  const tax = subtotal * settings.taxRate
+  const shipping = subtotal === 0 || subtotal >= settings.freeShippingThreshold ? 0 : settings.shippingFee
   const total = subtotal + tax + shipping
 
   const value = {

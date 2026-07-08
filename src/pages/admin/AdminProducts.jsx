@@ -1,26 +1,26 @@
 import { useState } from 'react'
-import { useProducts } from '../context/ProductContext'
-import { CATEGORIES } from '../data/products'
-import { makePlaceholder } from '../utils/placeholder'
-import { resizeImageFile } from '../utils/resizeImage'
-import { formatCurrency } from '../utils/format'
+import { useProducts } from '../../context/ProductContext'
+import { useCategories } from '../../context/CategoryContext'
+import { makePlaceholder } from '../../utils/placeholder'
+import { resizeImageFile } from '../../utils/resizeImage'
+import { formatCurrency } from '../../utils/format'
 
-const EMPTY_FORM = {
-  name: '',
-  category: CATEGORIES[0],
-  price: '',
-  discountPrice: '',
-  description: '',
-  rating: '4.0',
-  stock: '',
-  imagePreview: '',
-}
-
-export default function Admin() {
+export default function AdminProducts() {
   const { products, addProduct, updateProduct, deleteProduct } = useProducts()
+  const { categories } = useCategories()
+  const emptyForm = {
+    name: '',
+    category: categories[0] || '',
+    price: '',
+    discountPrice: '',
+    description: '',
+    rating: '4.0',
+    stock: '',
+    imagePreview: '',
+  }
   const [editingId, setEditingId] = useState(null)
   const [showForm, setShowForm] = useState(false)
-  const [form, setForm] = useState(EMPTY_FORM)
+  const [form, setForm] = useState(emptyForm)
   const [confirmDeleteId, setConfirmDeleteId] = useState(null)
   const [imageError, setImageError] = useState('')
 
@@ -42,7 +42,7 @@ export default function Admin() {
   }
 
   function openAddForm() {
-    setForm(EMPTY_FORM)
+    setForm(emptyForm)
     setEditingId(null)
     setImageError('')
     setShowForm(true)
@@ -106,9 +106,9 @@ export default function Admin() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div>
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Manage Products</h1>
+        <h2 className="text-lg font-semibold text-gray-900">Manage Products</h2>
         <button
           onClick={openAddForm}
           className="bg-primary-600 hover:bg-primary-700 text-white font-medium px-4 py-2 rounded-md text-sm"
@@ -163,7 +163,7 @@ export default function Admin() {
                   onChange={handleChange}
                   className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
-                  {CATEGORIES.map((c) => (
+                  {categories.map((c) => (
                     <option key={c} value={c}>{c}</option>
                   ))}
                 </select>

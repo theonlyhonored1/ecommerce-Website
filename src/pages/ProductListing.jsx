@@ -1,11 +1,12 @@
 import { useMemo, useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useProducts } from '../context/ProductContext'
-import { CATEGORIES } from '../data/products'
+import { useCategories } from '../context/CategoryContext'
 import ProductCard from '../components/ProductCard'
 
 export default function ProductListing() {
   const { products } = useProducts()
+  const { categories } = useCategories()
   const [searchParams, setSearchParams] = useSearchParams()
 
   const search = searchParams.get('search') || ''
@@ -74,7 +75,7 @@ export default function ProductListing() {
                 All Categories
               </button>
             </li>
-            {CATEGORIES.map((cat) => (
+            {categories.map((cat) => (
               <li key={cat}>
                 <button
                   onClick={() => updateParam('category', cat)}

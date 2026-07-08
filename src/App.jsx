@@ -11,7 +11,12 @@ import Checkout from './pages/Checkout'
 import OrderConfirmation from './pages/OrderConfirmation'
 import Login from './pages/Login'
 import Account from './pages/Account'
-import Admin from './pages/Admin'
+import AdminLayout from './pages/admin/AdminLayout'
+import AdminProducts from './pages/admin/AdminProducts'
+import AdminCategories from './pages/admin/AdminCategories'
+import AdminSettings from './pages/admin/AdminSettings'
+import AdminOrders from './pages/admin/AdminOrders'
+import AdminUsers from './pages/admin/AdminUsers'
 import NotFound from './pages/NotFound'
 
 export default function App() {
@@ -53,10 +58,16 @@ export default function App() {
             path="/admin"
             element={
               <RequireAdmin>
-                <Admin />
+                <AdminLayout />
               </RequireAdmin>
             }
-          />
+          >
+            <Route index element={<AdminProducts />} />
+            <Route path="categories" element={<AdminCategories />} />
+            <Route path="settings" element={<AdminSettings />} />
+            <Route path="orders" element={<AdminOrders />} />
+            <Route path="users" element={<AdminUsers />} />
+          </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

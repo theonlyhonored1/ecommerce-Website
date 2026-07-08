@@ -7,7 +7,7 @@ function img(text, bg) {
   return makePlaceholder(text, { bg })
 }
 
-export const CATEGORIES = ['Facewash', 'Sunscreen', 'Moisturiser']
+export const DEFAULT_CATEGORIES = ['Facewash', 'Sunscreen', 'Moisturiser']
 
 // Bump this whenever INITIAL_PRODUCTS changes shape/content so browsers with an
 // older catalog cached in localStorage pick up the new seed data automatically.

@@ -1,9 +1,11 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
+import { useSettings } from '../context/SettingsContext'
 import { formatCurrency } from '../utils/format'
 
 export default function Cart() {
   const { cartLines, subtotal, tax, shipping, total, updateQty, removeFromCart } = useCart()
+  const { settings } = useSettings()
   const navigate = useNavigate()
 
   if (cartLines.length === 0) {
@@ -88,7 +90,7 @@ export default function Cart() {
               <span>{formatCurrency(subtotal)}</span>
             </div>
             <div className="flex justify-between text-gray-600">
-              <span>Tax (8%)</span>
+              <span>Tax ({Math.round(settings.taxRate * 100)}%)</span>
               <span>{formatCurrency(tax)}</span>
             </div>
             <div className="flex justify-between text-gray-600">
@@ -96,7 +98,9 @@ export default function Cart() {
               <span>{shipping === 0 ? 'Free' : formatCurrency(shipping)}</span>
             </div>
             {shipping > 0 && (
-              <p className="text-xs text-gray-400">Free shipping on orders over $75</p>
+              <p className="text-xs text-gray-400">
+                Free shipping on orders over {formatCurrency(settings.freeShippingThreshold)}
+              </p>
             )}
             <div className="border-t border-gray-200 pt-2 flex justify-between font-semibold text-gray-900 text-base">
               <span>Total</span>

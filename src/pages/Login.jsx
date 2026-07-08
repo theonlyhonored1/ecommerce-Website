@@ -11,7 +11,7 @@ export default function Login() {
   const [mode, setMode] = useState('login')
   const [error, setError] = useState('')
   const [loginForm, setLoginForm] = useState({ email: '', password: '' })
-  const [signupForm, setSignupForm] = useState({ name: '', email: '', password: '', isAdmin: false })
+  const [signupForm, setSignupForm] = useState({ name: '', email: '', password: '' })
 
   function handleLoginSubmit(e) {
     e.preventDefault()
@@ -35,7 +35,6 @@ export default function Login() {
       name: signupForm.name,
       email: signupForm.email,
       password: signupForm.password,
-      role: signupForm.isAdmin ? 'admin' : 'customer',
     })
     if (!res.ok) {
       setError(res.error)
@@ -129,14 +128,6 @@ export default function Login() {
                 className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
             </div>
-            <label className="flex items-center gap-2 text-sm text-gray-600">
-              <input
-                type="checkbox"
-                checked={signupForm.isAdmin}
-                onChange={(e) => setSignupForm((f) => ({ ...f, isAdmin: e.target.checked }))}
-              />
-              Register as an admin account (demo purposes)
-            </label>
             <button type="submit" className="w-full bg-primary-600 hover:bg-primary-700 text-white font-medium py-2.5 rounded-md">
               Create Account
             </button>

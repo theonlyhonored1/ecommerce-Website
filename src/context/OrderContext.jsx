@@ -28,7 +28,11 @@ export function OrderProvider({ children }) {
       .sort((a, b) => b.createdAt - a.createdAt)
   }
 
-  const value = { orders, createOrder, getOrder, getOrdersForUser }
+  function updateOrderStatus(id, status) {
+    setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status } : o)))
+  }
+
+  const value = { orders, createOrder, getOrder, getOrdersForUser, updateOrderStatus }
 
   return <OrderContext.Provider value={value}>{children}</OrderContext.Provider>
 }
