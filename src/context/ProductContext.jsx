@@ -1,15 +1,25 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { loadFromStorage, saveToStorage } from '../utils/storage'
-import { INITIAL_PRODUCTS } from '../data/products'
+import { INITIAL_PRODUCTS, PRODUCTS_VERSION } from '../data/products'
 
 const ProductContext = createContext(null)
 const PRODUCTS_KEY = 'ecom_products'
+const PRODUCTS_VERSION_KEY = 'ecom_products_version'
+
+// If the seed catalog has changed since this browser last loaded it, reseed
+// instead of keeping the stale cached list (e.g. after the demo catalog is swapped out).
+function getInitialProducts() {
+  const storedVersion = loadFromStorage(PRODUCTS_VERSION_KEY, null)
+  if (storedVersion !== PRODUCTS_VERSION) return INITIAL_PRODUCTS
+  return loadFromStorage(PRODUCTS_KEY, INITIAL_PRODUCTS)
+}
 
 export function ProductProvider({ children }) {
-  const [products, setProducts] = useState(() => loadFromStorage(PRODUCTS_KEY, INITIAL_PRODUCTS))
+  const [products, setProducts] = useState(getInitialProducts)
 
   useEffect(() => {
     saveToStorage(PRODUCTS_KEY, products)
+    saveToStorage(PRODUCTS_VERSION_KEY, PRODUCTS_VERSION)
   }, [products])
 
   function getProduct(id) {
