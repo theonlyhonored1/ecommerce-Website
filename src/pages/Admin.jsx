@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useProducts } from '../context/ProductContext'
 import { CATEGORIES } from '../data/products'
 import { makePlaceholder } from '../utils/placeholder'
+import { resizeImageFile } from '../utils/resizeImage'
 import { formatCurrency } from '../utils/format'
 
 const EMPTY_FORM = {
@@ -12,6 +13,7 @@ const EMPTY_FORM = {
   description: '',
   rating: '4.0',
   stock: '',
+  imagePreview: '',
 }
 
 export default function Admin() {
@@ -20,15 +22,29 @@ export default function Admin() {
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState(EMPTY_FORM)
   const [confirmDeleteId, setConfirmDeleteId] = useState(null)
+  const [imageError, setImageError] = useState('')
 
   function handleChange(e) {
     const { name, value } = e.target
     setForm((f) => ({ ...f, [name]: value }))
   }
 
+  async function handleImageChange(e) {
+    const file = e.target.files[0]
+    if (!file) return
+    setImageError('')
+    try {
+      const dataUrl = await resizeImageFile(file)
+      setForm((f) => ({ ...f, imagePreview: dataUrl }))
+    } catch {
+      setImageError('Could not read that image file. Try a different one.')
+    }
+  }
+
   function openAddForm() {
     setForm(EMPTY_FORM)
     setEditingId(null)
+    setImageError('')
     setShowForm(true)
   }
 
@@ -41,8 +57,10 @@ export default function Admin() {
       description: product.description,
       rating: String(product.rating),
       stock: String(product.stock),
+      imagePreview: product.images?.[0] || '',
     })
     setEditingId(product.id)
+    setImageError('')
     setShowForm(true)
   }
 
@@ -53,6 +71,8 @@ export default function Admin() {
     const rating = parseFloat(form.rating) || 0
     const stock = parseInt(form.stock, 10) || 0
 
+    const images = [form.imagePreview || makePlaceholder(form.name)]
+
     if (editingId) {
       updateProduct(editingId, {
         name: form.name,
@@ -62,6 +82,7 @@ export default function Admin() {
         description: form.description,
         rating,
         stock,
+        images,
       })
     } else {
       addProduct({
@@ -72,7 +93,7 @@ export default function Admin() {
         description: form.description,
         rating,
         stock,
-        images: [makePlaceholder(form.name)],
+        images,
       })
     }
     setShowForm(false)
@@ -113,6 +134,26 @@ export default function Admin() {
                   onChange={handleChange}
                   className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Product Image</label>
+                <div className="flex items-center gap-4">
+                  <img
+                    src={form.imagePreview || makePlaceholder(form.name || 'Preview')}
+                    alt="Preview"
+                    className="h-16 w-16 rounded-md object-cover border border-gray-200 shrink-0"
+                  />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="flex-1 text-sm text-gray-600 file:mr-3 file:py-2 file:px-3 file:rounded-md file:border-0 file:bg-gray-100 file:text-sm file:font-medium file:text-gray-700 hover:file:bg-gray-200"
+                  />
+                </div>
+                {imageError && <p className="text-xs text-red-600 mt-1">{imageError}</p>}
+                {!form.imagePreview && (
+                  <p className="text-xs text-gray-400 mt-1">No image chosen yet — a placeholder will be used until you upload one.</p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
